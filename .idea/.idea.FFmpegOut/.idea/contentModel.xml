@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\hoang\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\hoang\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_FFmpegOut.1129938960.00" t="ExcludeRecursive" />
+    <e p="C:\Users\hoang\Documents\UnityProjects\text-to-animation-unity\Packages\FFmpegOut" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Editor" t="Include">
+          <e p="PackageTool.cs" t="Include" />
+        </e>
+        <e p="FFmpegOut" t="Include">
+          <e p="Editor" t="Include">
+            <e p="CameraCaptureEditor.cs" t="Include" />
+            <e p="FrameRateControllerEditor.cs" t="Include" />
+          </e>
+          <e p="Runtime" t="Include">
+            <e p="AssemblyInfo.cs" t="Include" />
+            <e p="CameraCapture.cs" t="Include" />
+            <e p="FFmpegPreset.cs" t="Include" />
+            <e p="FFmpegSession.cs" t="Include" />
+            <e p="FrameRateController.cs" t="Include" />
+            <e p="Internal" t="Include">
+              <e p="Blitter.cs" t="Include" />
+              <e p="FFmpegPipe.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="FFmpegOut.csproj" t="IncludeRecursive" />
+      <e p="FFmpegOut.Editor.csproj" t="IncludeRecursive" />
+      <e p="FFmpegOut.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

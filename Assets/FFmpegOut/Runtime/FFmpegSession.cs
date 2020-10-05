@@ -22,6 +22,19 @@ namespace FFmpegOut
             return CreateWithOutputPath(path, width, height, frameRate, preset);
         }
 
+        public static FFmpegSession Create(
+            string name,
+            int width, int height, float frameRate,
+            FFmpegPreset preset, bool recordAudio
+        )
+        {
+            name += System.DateTime.Now.ToString(" yyyy MMdd HHmmss");
+            var path = name.Replace(" ", "_") + preset.GetSuffix();
+            double sampleRate = AudioSettings.outputSampleRate;
+            return CreateWithOutputPath(path, width, height, frameRate, preset,
+                recordAudio, sampleRate);
+        }
+
         public static FFmpegSession CreateWithOutputPath(
             string outputPath,
             int width, int height, float frameRate,
@@ -38,9 +51,60 @@ namespace FFmpegOut
             );
         }
 
+        public static FFmpegSession CreateWithOutputPath(
+            string outputPath,
+            int width, int height, float frameRate,
+            FFmpegPreset preset, bool recordAudio, double sampleRate
+        )
+        {
+            /*
+@"-y -framerate 30 -f rawvideo -pix_fmt rgb32 -video_size 800x600 "
+      + @"-i unix:///var/folders/8q/p8gcyljs02lg80hxvyv49c800000gn/T/CoreFxPipe_ffv "
+     +@"-f s16le -channels 1 -sample_rate 48000 "
+      + @"-i unix:///var/folders/8q/p8gcyljs02lg80hxvyv49c800000gn/T/CoreFxPipe_ffa "
+     +@"-map 0:0 -map 1:0 -vcodec libx264 -crf 23 -pix_fmt yuv420p -preset medium -r 30 -c:a aac out.mp4";
+           @"-y -v 9 -loglevel 99 " +
+      @" -thread_queue_size 512 -framerate "+out_fps+" -f rawvideo -pix_fmt rgb32 -video_size 800x600 " +
+      @"-i - " +
+      @"-f s16le -ac 1 -ar "+out_ar+" -thread_queue_size 512 " +
+      @"-i async:tcp://127.0.0.1:50505 -loglevel trace " +
+      @"-map 1:0 -map 0:0 -c:a aac -ac 1 -ar 48000 " + // -map 0:0 -map 1:0
+      @"-vcodec libx264 -crf 23 -pix_fmt yuv420p -preset ultrafast -r "+out_fps+" out.mp4"
+*/
+            string videoPipeName = "-";
+            string audioPipeName = "async:tcp://127.0.0.1:50505?timeout=5000000";
+            string audioInputSpecification = " ";
+            string audioOutputOptions = " "; // TODO: presets
+            if (recordAudio)
+            {
+                // add audio pipe
+                audioInputSpecification = " -f f32le -ac 2 -ar "
+                                          + ((int) sampleRate).ToString() + " -thread_queue_size 512 -i " +
+                                          audioPipeName;
+                audioOutputOptions = " -map 0:0 -map 1:0 -c:a aac -ac 2 ";
+            }
+
+            string args = "-y -f rawvideo -thread_queue_size 512 -vcodec rawvideo -pixel_format rgba"
+                          + " -colorspace bt709"
+                          + " -video_size " + width + "x" + height
+                          + " -framerate " + frameRate
+                          + " -loglevel warning -i " + videoPipeName
+                          + audioInputSpecification
+                          + audioOutputOptions
+                          + preset.GetOptions()
+                          + " \"" + outputPath + "\"";
+            UnityEngine.Debug.Log(args);
+            return new FFmpegSession(args, recordAudio);
+        }
+
         public static FFmpegSession CreateWithArguments(string arguments)
         {
             return new FFmpegSession(arguments);
+        }
+
+        public static FFmpegSession CreateWithArguments(string arguments, bool recordAudio)
+        {
+            return new FFmpegSession(arguments, recordAudio);
         }
 
         #endregion
@@ -111,6 +175,30 @@ namespace FFmpegOut
                 );
             else
                 _pipe = new FFmpegPipe(arguments);
+        }
+        
+        public readonly bool recordAudio;
+
+        FFmpegSession(string arguments, bool recordAudio)
+        {
+            this.recordAudio = recordAudio;
+            if (!FFmpegPipe.IsAvailable)
+                Debug.LogWarning(
+                    "Failed to initialize an FFmpeg session due to missing " +
+                    "executable file. Please check FFmpeg installation."
+                );
+            else if (!UnityEngine.SystemInfo.supportsAsyncGPUReadback)
+                Debug.LogWarning(
+                    "Failed to initialize an FFmpeg session due to lack of " +
+                    "async GPU readback support. Please try changing " +
+                    "graphics API to readback-enabled one."
+                );
+            else
+                _pipe = new FFmpegPipe(arguments, recordAudio);
+        }
+        
+        public void PushAudioBuffer(float[] buffer, int channels) {
+            _pipe.PushAudioData(buffer, channels);
         }
 
         ~FFmpegSession()
