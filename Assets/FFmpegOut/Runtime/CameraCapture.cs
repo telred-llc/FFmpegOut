@@ -13,30 +13,42 @@ namespace FFmpegOut
 
         [SerializeField] int _width = 1920;
 
-        public int width {
+        public int width
+        {
             get { return _width; }
             set { _width = value; }
         }
 
         [SerializeField] int _height = 1080;
 
-        public int height {
+        public int height
+        {
             get { return _height; }
             set { _height = value; }
         }
 
         [SerializeField] FFmpegPreset _preset;
 
-        public FFmpegPreset preset {
+        public FFmpegPreset preset
+        {
             get { return _preset; }
             set { _preset = value; }
         }
 
         [SerializeField] float _frameRate = 60;
 
-        public float frameRate {
+        public float frameRate
+        {
             get { return _frameRate; }
             set { _frameRate = value; }
+        }
+
+        [SerializeField] bool _recordAudio = false;
+
+        public bool recordAudio
+        {
+            get { return _recordAudio; }
+            set { _recordAudio = value; }
         }
 
         #endregion
@@ -65,7 +77,8 @@ namespace FFmpegOut
         float _startTime;
         int _frameDropCount;
 
-        float FrameTime {
+        float FrameTime
+        {
             get { return _startTime + (_frameCount - 0.5f) / _frameRate; }
         }
 
@@ -125,6 +138,10 @@ namespace FFmpegOut
                 _session?.CompletePushFrames();
             }
         }
+        void OnAudioFilterRead(float[] buffer, int channels) {
+            if (_session == null || !_session.recordAudio) return;
+            _session.PushAudioBuffer(buffer, channels);
+        }
 
         void Update()
         {
@@ -138,7 +155,7 @@ namespace FFmpegOut
                 // object to keep frames presented on the screen.
                 if (camera.targetTexture == null)
                 {
-                    _tempRT = new RenderTexture(_width, _height, 24, GetTargetFormat(camera)); 
+                    _tempRT = new RenderTexture(_width, _height, 24, GetTargetFormat(camera));
                     _tempRT.antiAliasing = GetAntiAliasingLevel(camera);
                     camera.targetTexture = _tempRT;
                     _blitter = Blitter.CreateInstance(camera);
@@ -149,7 +166,7 @@ namespace FFmpegOut
                     gameObject.name,
                     camera.targetTexture.width,
                     camera.targetTexture.height,
-                    _frameRate, preset
+                    _frameRate, preset, recordAudio
                 );
 
                 _startTime = Time.time;
