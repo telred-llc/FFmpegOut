@@ -2,14 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ea4c2381-790e-428b-b63a-f139437e24e4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.FFmpegOut/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FFmpegOut/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Editor/CameraCaptureEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/FFmpegOut/Editor/CameraCaptureEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/CameraCapture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/CameraCapture.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/FFmpegSession.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/FFmpegSession.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/Internal/FFmpegPipe.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/Internal/FFmpegPipe.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/package.json.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/UnityConnectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/UnityConnectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/StreamingAssets/FFmpegOut/Linux/ffmpeg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/StreamingAssets/FFmpegOut/Windows/ffmpeg.exe.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/StreamingAssets/FFmpegOut/macOS/ffmpeg.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,10 +22,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Packages/manifest.json" />
+        <option value="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/Internal/FFmpegPipe.cs" />
         <option value="$PROJECT_DIR$/Assets/FFmpegOut/Editor/CameraCaptureEditor.cs" />
         <option value="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/CameraCapture.cs" />
         <option value="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/FFmpegSession.cs" />
-        <option value="$PROJECT_DIR$/Assets/FFmpegOut/Runtime/Internal/FFmpegPipe.cs" />
       </list>
     </option>
   </component>
@@ -78,7 +77,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1601892307027</updated>
-      <workItem from="1601892317027" duration="2764000" />
+      <workItem from="1601892317027" duration="3361000" />
+      <workItem from="1601954969362" duration="1481000" />
     </task>
     <servers />
   </component>
@@ -89,5 +89,11 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1601955518418">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050/-1920.3.1920.1050@0.0.1920.1050" timestamp="1601955518418" />
   </component>
 </project>

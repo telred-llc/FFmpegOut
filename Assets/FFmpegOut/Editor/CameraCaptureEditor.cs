@@ -16,7 +16,9 @@ namespace FFmpegOut
         SerializedProperty _preset;
         SerializedProperty _frameRate;
         SerializedProperty _recordAudio;
-
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+        private SerializedProperty _fileName;
+#endif
         GUIContent[] _presetLabels;
         int[] _presetOptions;
 
@@ -39,6 +41,9 @@ namespace FFmpegOut
             _preset = serializedObject.FindProperty("_preset");
             _frameRate = serializedObject.FindProperty("_frameRate");
             _recordAudio = serializedObject.FindProperty("_recordAudio");
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+            _fileName = serializedObject.FindProperty("_fileName");
+#endif
 
             var presets = FFmpegPreset.GetValues(typeof(FFmpegPreset));
             _presetLabels = presets.Cast<FFmpegPreset>().
@@ -59,7 +64,9 @@ namespace FFmpegOut
             EditorGUILayout.IntPopup(_preset, _presetLabels, _presetOptions);
             EditorGUILayout.PropertyField(_frameRate);
             EditorGUILayout.PropertyField(_recordAudio);
-
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+            EditorGUILayout.PropertyField(_fileName);
+#endif
             serializedObject.ApplyModifiedProperties();
         }
     }

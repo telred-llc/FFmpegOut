@@ -28,7 +28,9 @@ namespace FFmpegOut
             FFmpegPreset preset, bool recordAudio
         )
         {
+#if !FFMPEG_OUT_CUSTOM_FILE_NAME
             name += System.DateTime.Now.ToString(" yyyy MMdd HHmmss");
+#endif
             var path = name.Replace(" ", "_") + preset.GetSuffix();
             double sampleRate = AudioSettings.outputSampleRate;
             return CreateWithOutputPath(path, width, height, frameRate, preset,
@@ -176,7 +178,7 @@ namespace FFmpegOut
             else
                 _pipe = new FFmpegPipe(arguments);
         }
-        
+
         public readonly bool recordAudio;
 
         FFmpegSession(string arguments, bool recordAudio)
@@ -196,8 +198,9 @@ namespace FFmpegOut
             else
                 _pipe = new FFmpegPipe(arguments, recordAudio);
         }
-        
-        public void PushAudioBuffer(float[] buffer, int channels) {
+
+        public void PushAudioBuffer(float[] buffer, int channels)
+        {
             _pipe.PushAudioData(buffer, channels);
         }
 
