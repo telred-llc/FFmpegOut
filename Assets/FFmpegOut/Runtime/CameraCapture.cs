@@ -50,6 +50,15 @@ namespace FFmpegOut
             get { return _recordAudio; }
             set { _recordAudio = value; }
         }
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+        [SerializeField] string _fileName = "";
+
+        public string fileName
+        {
+            get { return _fileName; }
+            set { _fileName = value; }
+        }
+#endif
 
         #endregion
 
@@ -138,7 +147,9 @@ namespace FFmpegOut
                 _session?.CompletePushFrames();
             }
         }
-        void OnAudioFilterRead(float[] buffer, int channels) {
+
+        void OnAudioFilterRead(float[] buffer, int channels)
+        {
             if (_session == null || !_session.recordAudio) return;
             _session.PushAudioBuffer(buffer, channels);
         }
@@ -163,7 +174,11 @@ namespace FFmpegOut
 
                 // Start an FFmpeg session.
                 _session = FFmpegSession.Create(
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+                    _fileName,
+#else
                     gameObject.name,
+#endif
                     camera.targetTexture.width,
                     camera.targetTexture.height,
                     _frameRate, preset, recordAudio
