@@ -25,7 +25,7 @@ namespace FFmpegOut
         public static FFmpegSession Create(
             string name,
             int width, int height, float frameRate,
-            FFmpegPreset preset, bool recordAudio
+            FFmpegPreset preset, bool recordAudio, int audioPort
         )
         {
 #if !FFMPEG_OUT_CUSTOM_FILE_NAME
@@ -34,7 +34,7 @@ namespace FFmpegOut
             var path = name.Replace(" ", "_") + preset.GetSuffix();
             double sampleRate = AudioSettings.outputSampleRate;
             return CreateWithOutputPath(path, width, height, frameRate, preset,
-                recordAudio, sampleRate);
+                recordAudio, sampleRate, audioPort);
         }
 
         public static FFmpegSession CreateWithOutputPath(
@@ -56,7 +56,7 @@ namespace FFmpegOut
         public static FFmpegSession CreateWithOutputPath(
             string outputPath,
             int width, int height, float frameRate,
-            FFmpegPreset preset, bool recordAudio, double sampleRate
+            FFmpegPreset preset, bool recordAudio, double sampleRate, int audioPort
         )
         {
             /*
@@ -74,7 +74,7 @@ namespace FFmpegOut
       @"-vcodec libx264 -crf 23 -pix_fmt yuv420p -preset ultrafast -r "+out_fps+" out.mp4"
 */
             string videoPipeName = "-";
-            string audioPipeName = "async:tcp://127.0.0.1:50505?timeout=5000000";
+            string audioPipeName = "async:tcp://127.0.0.1:"+audioPort+"?timeout=5000000";
             string audioInputSpecification = " ";
             string audioOutputOptions = " "; // TODO: presets
             if (recordAudio)
@@ -96,7 +96,7 @@ namespace FFmpegOut
                           + preset.GetOptions()
                           + " \"" + outputPath + "\"";
             UnityEngine.Debug.Log(args);
-            return new FFmpegSession(args, recordAudio);
+            return new FFmpegSession(args, recordAudio, audioPort);
         }
 
         public static FFmpegSession CreateWithArguments(string arguments)
@@ -104,9 +104,9 @@ namespace FFmpegOut
             return new FFmpegSession(arguments);
         }
 
-        public static FFmpegSession CreateWithArguments(string arguments, bool recordAudio)
+        public static FFmpegSession CreateWithArguments(string arguments, bool recordAudio, int audioPort)
         {
-            return new FFmpegSession(arguments, recordAudio);
+            return new FFmpegSession(arguments, recordAudio, audioPort);
         }
 
         #endregion
@@ -181,7 +181,7 @@ namespace FFmpegOut
 
         public readonly bool recordAudio;
 
-        FFmpegSession(string arguments, bool recordAudio)
+        FFmpegSession(string arguments, bool recordAudio, int audioPort)
         {
             this.recordAudio = recordAudio;
             if (!FFmpegPipe.IsAvailable)
@@ -196,7 +196,7 @@ namespace FFmpegOut
                     "graphics API to readback-enabled one."
                 );
             else
-                _pipe = new FFmpegPipe(arguments, recordAudio);
+                _pipe = new FFmpegPipe(arguments, recordAudio, audioPort);
         }
 
         public void PushAudioBuffer(float[] buffer, int channels)

@@ -38,7 +38,7 @@ namespace FFmpegOut
             _pipeThread.Start();
         }
         
-        public FFmpegPipe(string arguments, bool recordAudio)
+        public FFmpegPipe(string arguments, bool recordAudio, int audioPort)
         {
             // Start FFmpeg subprocess.
             if (recordAudio) {
@@ -46,6 +46,7 @@ namespace FFmpegOut
                 _audioPipeThread.Start();
                 _audioPing.WaitOne();
                 UnityEngine.Debug.Log("Audio Pipe Ready to stream.");
+                _audioPort = audioPort;
             }
 
             _subprocess = Process.Start(new ProcessStartInfo {
@@ -156,6 +157,7 @@ namespace FFmpegOut
         Thread _copyThread;
         Thread _pipeThread;
         Thread _audioPipeThread;
+        int _audioPort = 50505;
 
         AutoResetEvent _copyPing = new AutoResetEvent(false);
         AutoResetEvent _copyPong = new AutoResetEvent(false);
@@ -278,7 +280,7 @@ namespace FFmpegOut
             UnityEngine.Debug.Log("Video end, written "+(writtenFrames/15.0).ToString("F2")+"s");
         }
         void AudioPipeThread() {
-            TcpListener server = new TcpListener(System.Net.IPAddress.Any, 50505);
+            TcpListener server = new TcpListener(System.Net.IPAddress.Any, _audioPort);
             BinaryWriter writer = new BinaryWriter(new MemoryStream(_audioSendBuffer));
             server.Start();
             _audioPing.Set();

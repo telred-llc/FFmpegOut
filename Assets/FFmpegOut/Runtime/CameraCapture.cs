@@ -44,11 +44,17 @@ namespace FFmpegOut
         }
 
         [SerializeField] bool _recordAudio = false;
+        [SerializeField] int _audioPort = 50505;
 
         public bool recordAudio
         {
             get { return _recordAudio; }
             set { _recordAudio = value; }
+        }
+        public int audioPort
+        {
+            get { return _audioPort; }
+            set { _audioPort = value; }
         }
 #if FFMPEG_OUT_CUSTOM_FILE_NAME
         [SerializeField] string _fileName = "";
@@ -181,7 +187,7 @@ namespace FFmpegOut
 #endif
                     camera.targetTexture.width,
                     camera.targetTexture.height,
-                    _frameRate, preset, recordAudio
+                    _frameRate, preset, recordAudio, audioPort
                 );
 
                 _startTime = Time.time;
