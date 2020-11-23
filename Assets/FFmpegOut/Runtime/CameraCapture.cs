@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using UniRx;
 
 namespace FFmpegOut
 {
@@ -15,6 +16,9 @@ namespace FFmpegOut
     {
         #region Public properties
 
+        [SerializeField] private Camera camera;
+        private bool _readyToPush = false;
+        
         [SerializeField] int _width = 1920;
 
         public int width
@@ -154,13 +158,19 @@ namespace FFmpegOut
 
         void OnAudioFilterRead(float[] buffer, int channels)
         {
-            if (_session == null || !_session.recordAudio) return;
+            if (_session == null || !_session.recordAudio || !_readyToPush) return;
             _session.PushAudioBuffer(buffer, channels);
         }
 
-        void Update()
+        private void Awake()
         {
-            var camera = GetComponent<Camera>();
+            // var camera = GetComponent<Camera>();
+            camera = this.GetComponent<Camera>();
+            Observable.Timer(TimeSpan.FromSeconds(1)).ObserveOn(Scheduler.MainThread).SubscribeOn(Scheduler.MainThread).Subscribe(l =>
+            {
+                Debug.Log("Ready To Push");
+                _readyToPush  = true;
+            });
 
             // Lazy initialization
             if (_session == null)
@@ -191,6 +201,47 @@ namespace FFmpegOut
                 _startTime = Time.time;
                 _frameCount = 0;
                 _frameDropCount = 0;
+            }
+        }
+
+        void Update()
+        {
+//             var camera = GetComponent<Camera>();
+//
+//             // Lazy initialization
+//             if (_session == null)
+//             {
+//                 // Give a newly created temporary render texture to the camera
+//                 // if it's set to render to a screen. Also create a blitter
+//                 // object to keep frames presented on the screen.
+//                 if (camera.targetTexture == null)
+//                 {
+//                     _tempRT = new RenderTexture(_width, _height, 24, GetTargetFormat(camera));
+//                     _tempRT.antiAliasing = GetAntiAliasingLevel(camera);
+//                     camera.targetTexture = _tempRT;
+//                     _blitter = Blitter.CreateInstance(camera);
+//                 }
+//
+//                 // Start an FFmpeg session.
+//                 _session = FFmpegSession.Create(
+// #if FFMPEG_OUT_CUSTOM_FILE_NAME
+//                     _fileName,
+// #else
+//                     gameObject.name,
+// #endif
+//                     camera.targetTexture.width,
+//                     camera.targetTexture.height,
+//                     _frameRate, preset, recordAudio, GetAvailablePort(50505)
+//                 );
+//
+//                 _startTime = Time.time;
+//                 _frameCount = 0;
+//                 _frameDropCount = 0;
+//             }
+
+            if (!_readyToPush)
+            {
+                return;
             }
 
             var gap = Time.time - FrameTime;

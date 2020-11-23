@@ -1,6 +1,8 @@
 {
     "name": "FFmpegOut",
-    "references": [],
+    "references": [
+        "UniRx"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,

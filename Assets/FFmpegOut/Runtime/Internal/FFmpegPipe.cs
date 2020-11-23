@@ -258,7 +258,7 @@ namespace FFmpegOut
                     byte[] buffer;
                     lock (_pipeQueue) buffer = _pipeQueue.Dequeue();
 
-                    // Write it into the FFmpeg pipe.
+                    // Write it into the FFmpeg pipe. 
                     try
                     {
                         pipe.Write(buffer, 0, buffer.Length);
