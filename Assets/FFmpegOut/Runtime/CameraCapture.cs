@@ -158,15 +158,32 @@ namespace FFmpegOut
 
         void OnAudioFilterRead(float[] buffer, int channels)
         {
-            if (_session == null || !_session.recordAudio || !_readyToPush) return;
-            _session.PushAudioBuffer(buffer, channels);
+            // long currentTime = DateTime.Now.Ticks;
+            // int index = buffer.Length;
+            // foreach (var f in buffer)
+            // {
+            //     Debug.Log( currentTime + "--" + index+ ":" + f);
+            // }
+            if (_session == null || !_session.recordAudio) return;
+            if (!_readyToPush)
+            {
+                _session.PushAudioBuffer(_buffer, channels);
+            }
+            else
+            {
+                _session.PushAudioBuffer(buffer, channels);    
+            }
         }
-
+        private float[] _buffer = new float[2048];
         private void Awake()
         {
+            // foreach (var f in _buffer)
+            // {
+            //     Debug.Log("Data: " + f);
+            // }
             // var camera = GetComponent<Camera>();
             camera = this.GetComponent<Camera>();
-            Observable.Timer(TimeSpan.FromSeconds(1)).ObserveOn(Scheduler.MainThread).SubscribeOn(Scheduler.MainThread).Subscribe(l =>
+            Observable.Timer(TimeSpan.FromMilliseconds(250)).ObserveOn(Scheduler.MainThread).SubscribeOn(Scheduler.MainThread).Subscribe(l =>
             {
                 Debug.Log("Ready To Push");
                 _readyToPush  = true;
@@ -239,10 +256,10 @@ namespace FFmpegOut
 //                 _frameDropCount = 0;
 //             }
 
-            if (!_readyToPush)
-            {
-                return;
-            }
+            // if (!_readyToPush)
+            // {
+            //     return;
+            // }
 
             var gap = Time.time - FrameTime;
             var delta = 1 / _frameRate;

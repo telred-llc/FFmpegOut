@@ -74,7 +74,7 @@ namespace FFmpegOut
       @"-vcodec libx264 -crf 23 -pix_fmt yuv420p -preset ultrafast -r "+out_fps+" out.mp4"
 */
             string videoPipeName = "-";
-            string audioPipeName = "async:tcp://127.0.0.1:"+audioPort+"?timeout=5000000";
+            string audioPipeName = "async:tcp://127.0.0.1:" + audioPort + "?timeout=5000000";
             string audioInputSpecification = " ";
             string audioOutputOptions = " "; // TODO: presets
             if (recordAudio)
