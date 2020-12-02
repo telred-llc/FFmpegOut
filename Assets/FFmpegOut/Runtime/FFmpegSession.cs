@@ -25,6 +25,20 @@ namespace FFmpegOut
         public static FFmpegSession Create(
             string name,
             int width, int height, float frameRate,
+            FFmpegPreset preset, string[] audioFileNames, long duration
+        )
+        {
+#if !FFMPEG_OUT_CUSTOM_FILE_NAME
+            name += System.DateTime.Now.ToString(" yyyy MMdd HHmmss");
+#endif
+            var path = name.Replace(" ", "_") + preset.GetSuffix();
+            double sampleRate = AudioSettings.outputSampleRate;
+            return CreateWithOutputPath(path, width, height, frameRate, preset, audioFileNames, duration);
+        }
+        
+        public static FFmpegSession Create(
+            string name,
+            int width, int height, float frameRate,
             FFmpegPreset preset, bool recordAudio
         )
         {
@@ -33,8 +47,15 @@ namespace FFmpegOut
 #endif
             var path = name.Replace(" ", "_") + preset.GetSuffix();
             double sampleRate = AudioSettings.outputSampleRate;
-            return CreateWithOutputPath(path, width, height, frameRate, preset,
-                recordAudio, sampleRate);
+            if (recordAudio)
+            {
+                return CreateWithOutputPath(path, width, height, frameRate, preset,
+                    recordAudio, sampleRate);    
+            }
+            else
+            {
+                return CreateWithOutputPath(path, width, height, frameRate, preset);    
+            }
         }
 
         public static FFmpegSession CreateWithOutputPath(
@@ -48,7 +69,31 @@ namespace FFmpegOut
                 + " -colorspace bt709"
                 + " -video_size " + width + "x" + height
                 + " -framerate " + frameRate
-                + " -loglevel warning -i - " + preset.GetOptions()
+                + " -loglevel warning -i -" + preset.GetOptions()
+                + " \"" + outputPath + "\""
+            );
+        }
+        
+        public static FFmpegSession CreateWithOutputPath(
+            string outputPath,
+            int width, int height, float frameRate,
+            FFmpegPreset preset, string[] audioFileName, long duration
+        )
+        {
+            string audioInput = "";
+            foreach (var s in audioFileName)
+            {
+                audioInput += " -i " + s;
+            }
+            Debug.Log("Audi filename: " + audioInput);
+            return new FFmpegSession(
+                "-y -f rawvideo -vcodec rawvideo -pixel_format rgba"
+                + " -colorspace bt709"
+                + " -video_size " + width + "x" + height
+                + " -framerate " + frameRate
+                + " -loglevel warning -i -"
+                + audioInput + " -filter_complex \"[1:a][2:a]amerge=inputs=2[a]\" -map 0:0 -map \"[a]\" -c:a aac -ac 2 -t " + duration +"ms "
+                + preset.GetOptions()
                 + " \"" + outputPath + "\""
             );
         }

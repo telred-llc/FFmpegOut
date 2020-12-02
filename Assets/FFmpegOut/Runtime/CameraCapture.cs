@@ -42,7 +42,7 @@ namespace FFmpegOut
             get { return _frameRate; }
             set { _frameRate = value; }
         }
-
+#if FFMPEG_OUT_STREAM_AUDIO
         [SerializeField] bool _recordAudio = false;
 
         public bool recordAudio
@@ -50,6 +50,7 @@ namespace FFmpegOut
             get { return _recordAudio; }
             set { _recordAudio = value; }
         }
+#endif
 #if FFMPEG_OUT_CUSTOM_FILE_NAME
         [SerializeField] string _fileName = "";
 
@@ -57,6 +58,23 @@ namespace FFmpegOut
         {
             get { return _fileName; }
             set { _fileName = value; }
+        }
+#endif
+#if FFMPEG_OUT_INPUT_AUDIO
+        [SerializeField] string[] _audioFileName;
+
+        public string[] audioFileName
+        {
+            get { return _audioFileName; }
+            set { _audioFileName = value; }
+        }
+        
+        [SerializeField] long _duration;
+
+        public long duration
+        {
+            get { return _duration; }
+            set { _duration = value; }
         }
 #endif
 
@@ -173,6 +191,7 @@ namespace FFmpegOut
                 }
 
                 // Start an FFmpeg session.
+#if FFMPEG_OUT_STREAM_AUDIO
                 _session = FFmpegSession.Create(
 #if FFMPEG_OUT_CUSTOM_FILE_NAME
                     _fileName,
@@ -183,6 +202,29 @@ namespace FFmpegOut
                     camera.targetTexture.height,
                     _frameRate, preset, recordAudio
                 );
+#elif FFMPEG_OUT_INPUT_AUDIO
+                _session = FFmpegSession.Create(
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+                    _fileName,
+#else
+                    gameObject.name,
+#endif
+                    camera.targetTexture.width,
+                    camera.targetTexture.height,
+                    _frameRate, preset, _audioFileName, _duration
+                );
+#else
+                _session = FFmpegSession.Create(
+#if FFMPEG_OUT_CUSTOM_FILE_NAME
+                    _fileName,
+#else
+                    gameObject.name,
+#endif
+                    camera.targetTexture.width,
+                    camera.targetTexture.height,
+                    _frameRate, preset
+                );
+#endif
 
                 _startTime = Time.time;
                 _frameCount = 0;
