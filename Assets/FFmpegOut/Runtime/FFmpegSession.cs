@@ -81,9 +81,11 @@ namespace FFmpegOut
         )
         {
             string audioInput = "";
-            foreach (var s in audioFileName)
+            string inputArgs = "";
+            for (int i = 0; i < audioFileName.Length; i++)
             {
-                audioInput += " -i " + s;
+                audioInput += " -stream_loop -1 -i " + audioFileName[i];
+                inputArgs += "[" + (i + 1) + ":a]";
             }
             Debug.Log("Audi filename: " + audioInput);
             return new FFmpegSession(
@@ -92,7 +94,7 @@ namespace FFmpegOut
                 + " -video_size " + width + "x" + height
                 + " -framerate " + frameRate
                 + " -loglevel warning -i -"
-                + audioInput + " -filter_complex \"[1:a][2:a]amerge=inputs=2[a]\" -map 0:0 -map \"[a]\" -c:a aac -ac 2 -t " + duration +"ms "
+                + audioInput + " -filter_complex \""+inputArgs+"amerge=inputs="+audioFileName.Length+"[a]\" -map 0:0 -map \"[a]\" -c:a aac -ac 2 -t " + duration +"ms "
                 + preset.GetOptions()
                 + " \"" + outputPath + "\""
             );
